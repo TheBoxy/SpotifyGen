@@ -1,0 +1,3 @@
+{
+  "/api/spotify/refresh-token": "pages/api/spotify/refresh-token.js"
+}

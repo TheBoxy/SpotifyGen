@@ -1,0 +1,47 @@
+/* [project]/pages/Home.module.css [client] (css) */
+.Home-module__3v8E6a__main {
+  background: linear-gradient(135deg, #f864bd, #9f59d1, #00d9ff);
+  background-size: 400% 400%;
+  animation: 10s infinite Home-module__3v8E6a__gradientAnimation;
+}
+
+@keyframes Home-module__3v8E6a__gradientAnimation {
+  0% {
+    background-position: 0%;
+  }
+
+  50% {
+    background-position: 100%;
+  }
+
+  100% {
+    background-position: 0%;
+  }
+}
+
+.Home-module__3v8E6a__scrolling-card {
+  max-height: 36rem;
+  overflow-y: auto;
+}
+
+.Home-module__3v8E6a__spinner {
+  border: 4px solid #ffffff4d;
+  border-top: 4px solid #fff;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: 1s linear infinite Home-module__3v8E6a__spin;
+}
+
+@keyframes Home-module__3v8E6a__spin {
+  0% {
+    transform: rotate(0);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+
+/*# sourceMappingURL=pages_Home_module_9f3140.css.map*/

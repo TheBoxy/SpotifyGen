@@ -1,0 +1,9 @@
+{
+  "/_app": "pages/_app.js",
+  "/_document": "pages/_document.js",
+  "/": "pages/index.js",
+  "/api/auth/[...nextauth]": "pages/api/auth/[...nextauth].js",
+  "/api/spotify/top-tracks": "pages/api/spotify/top-tracks.js",
+  "/api/spotify/refresh-token": "pages/api/spotify/refresh-token.js",
+  "/api/gpt/generate-era": "pages/api/gpt/generate-era.js"
+}

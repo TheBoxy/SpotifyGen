@@ -1,0 +1,3 @@
+{
+  "/api/spotify/top-tracks": "pages/api/spotify/top-tracks.js"
+}

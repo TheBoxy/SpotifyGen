@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["file:///Users/mac/Desktop/Spotify%20Era/frontend/pages/Home.module.css"],"sourcesContent":[".main {\n    background: linear-gradient(135deg, #f864bd, #9f59d1, #00d9ff);\n    background-size: 400% 400%;\n    animation: gradientAnimation 10s ease infinite;\n  }\n  \n  @keyframes gradientAnimation {\n    0% {\n      background-position: 0% 50%;\n    }\n    50% {\n      background-position: 100% 50%;\n    }\n    100% {\n      background-position: 0% 50%;\n    }\n  }\n\n.scrolling-card {\n    max-height: 36rem; /* Custom height */\n    overflow-y: auto;\n}\n\n.spinner {\n    border: 4px solid rgba(255, 255, 255, 0.3);\n    border-top: 4px solid #fff;\n    border-radius: 50%;\n    width: 40px;\n    height: 40px;\n    animation: spin 1s linear infinite;\n  }\n  \n  @keyframes spin {\n    0% {\n      transform: rotate(0deg);\n    }\n    100% {\n      transform: rotate(360deg);\n    }\n  }"],"names":[],"mappings":"AAAA;;;;;;AAME;;;;;;;;;;;;;;AAYF;;;;;AAKA;;;;;;;;;AASE"}},
+    {"offset": {"line": 44, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
+}

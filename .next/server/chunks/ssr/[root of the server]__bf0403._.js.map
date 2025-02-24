@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 63, "column": 0}, "map": {"version":3,"sources":["file:///Users/mac/Desktop/Spotify%20Era/frontend/pages/_app.tsx"],"sourcesContent":["// pages/_app.tsx\nimport { SessionProvider } from \"next-auth/react\";\nimport type { AppProps } from \"next/app\";\nimport '../pages/index.css'; // Or wherever your CSS is located\n\n\nfunction MyApp({ Component, pageProps }: AppProps) {\n  return (\n    <SessionProvider session={pageProps.session}>\n      <Component {...pageProps} />\n    </SessionProvider>\n  );\n}\n\nexport default MyApp;\n"],"names":[],"mappings":"AAAA,iBAAiB;;;;;AACjB;;;;AAKA,SAAS,MAAM,EAAE,SAAS,EAAE,SAAS,EAAY;IAC/C,qBACE,qKAAC,mIAAA,CAAA,kBAAe;QAAC,SAAS,UAAU,OAAO;kBACzC,cAAA,qKAAC;YAAW,GAAG,SAAS;;;;;;;;;;;AAG9B;uCAEe"}},
+    {"offset": {"line": 89, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
+}
