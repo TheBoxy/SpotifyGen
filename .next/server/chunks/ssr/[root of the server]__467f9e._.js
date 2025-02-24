@@ -79,20 +79,20 @@ function MyApp({ Component, pageProps }) {
                 href: "/favicon.ico"
             }, void 0, false, {
                 fileName: "[project]/pages/_app.tsx",
-                lineNumber: 12,
+                lineNumber: 11,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(Component, {
                 ...pageProps
             }, void 0, false, {
                 fileName: "[project]/pages/_app.tsx",
-                lineNumber: 13,
+                lineNumber: 12,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/pages/_app.tsx",
-        lineNumber: 11,
+        lineNumber: 10,
         columnNumber: 5
     }, this);
 }

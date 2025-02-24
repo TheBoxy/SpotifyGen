@@ -2,7 +2,6 @@
 import { SessionProvider } from "next-auth/react";
 import type { AppProps } from "next/app";
 import '../pages/index.css'; // Or wherever your CSS is located
-import Head from 'next/head';
 
 
 function MyApp({ Component, pageProps }: AppProps) {
