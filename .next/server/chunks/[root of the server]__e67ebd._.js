@@ -27,39 +27,55 @@ __turbopack_esm__({
 var __TURBOPACK__imported__module__$5b$externals$5d2f$next$2d$auth$2f$react__$5b$external$5d$__$28$next$2d$auth$2f$react$2c$__cjs$29$__ = __turbopack_import__("[externals]/next-auth/react [external] (next-auth/react, cjs)");
 ;
 async function handler(req, res) {
-    const session = await (0, __TURBOPACK__imported__module__$5b$externals$5d2f$next$2d$auth$2f$react__$5b$external$5d$__$28$next$2d$auth$2f$react$2c$__cjs$29$__["getSession"])({
-        req
-    });
-    if (!session) {
-        return res.status(401).json({
-            error: "Unathorized"
+    try {
+        const session = await (0, __TURBOPACK__imported__module__$5b$externals$5d2f$next$2d$auth$2f$react__$5b$external$5d$__$28$next$2d$auth$2f$react$2c$__cjs$29$__["getSession"])({
+            req
+        });
+        if (!session) {
+            return res.status(401).json({
+                error: "Unauthorized - No session found"
+            });
+        }
+        const refreshToken = session.refreshToken;
+        if (!refreshToken) {
+            return res.status(400).json({
+                error: "Refresh token not found in session"
+            });
+        }
+        const tokenEndpoint = "https://accounts.spotify.com/api/token";
+        const basicAuth = Buffer.from(`${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`).toString("base64");
+        const response = await fetch(tokenEndpoint, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                Authorization: `Basic ${basicAuth}`
+            },
+            body: new URLSearchParams({
+                grant_type: "refresh_token",
+                refresh_token: refreshToken
+            })
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            console.error("Spotify token refresh failed:", data);
+            return res.status(response.status).json({
+                error: "Failed to refresh token",
+                details: data
+            });
+        }
+        // Important: The refresh token might not always be returned by Spotify
+        // We need to handle this case by keeping the old refresh token if a new one isn't provided
+        const newRefreshToken = data.refresh_token || refreshToken;
+        res.status(200).json({
+            accessToken: data.access_token,
+            refreshToken: newRefreshToken
+        });
+    } catch (error) {
+        console.error("Server error during token refresh:", error);
+        res.status(500).json({
+            error: "Internal server error during token refresh"
         });
     }
-    const refreshToken = session.refreshToken;
-    const response = await fetch("https://accounts.spotify.com/api/token", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            Authorization: `Basic ${Buffer.from(`${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`).toString("base64")}`
-        },
-        body: new URLSearchParams({
-            grant_type: "refresh_token",
-            refresh_token: refreshToken
-        })
-    });
-    const data = await response.json();
-    console.log(data);
-    if (!response.ok) {
-        return res.status(response.status).json(data);
-        "TURBOPACK unreachable";
-    }
-    // Update the session with the new access token
-    session.accessToken = data.access_token;
-    session.refreshToken = data.refresh_token;
-    res.status(200).json({
-        accessToken: data.access_token,
-        refreshToken: data.refresh_token
-    });
 }
 }}),
 "[project]/node_modules/next/dist/esm/server/route-modules/pages-api/module.compiled.js [api] (ecmascript)": (function(__turbopack_context__) {

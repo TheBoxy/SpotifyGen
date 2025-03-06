@@ -44,20 +44,46 @@ const __TURBOPACK__default__export__ = (0, __TURBOPACK__imported__module__$5b$ex
             authorization: "https://accounts.spotify.com/authorize?scope=user-top-read"
         })
     ],
+    secret: process.env.NEXTAUTH_SECRET,
+    session: {
+        strategy: "jwt",
+        maxAge: 60 * 60
+    },
     callbacks: {
         async session ({ session, token }) {
-            // Add access token to session
+            // Add tokens to session
             session.accessToken = token.access_token;
             session.refreshToken = token.refreshToken;
+            session.tokenExpiry = token.tokenExpiry;
+            session.error = token.error;
             return session;
         },
-        async jwt ({ token, account }) {
-            if (account) {
-                token.access_token = account.access_token;
-                token.refreshToken = account.refresh_token;
+        async jwt ({ token, account, user }) {
+            // Initial sign in
+            if (account && user) {
+                return {
+                    ...token,
+                    access_token: account.access_token,
+                    refreshToken: account.refresh_token,
+                    tokenExpiry: Math.floor(Date.now() / 1000) + account.expires_in,
+                    user
+                };
             }
-            return token;
+            // Return the token if it's still valid
+            if (token.tokenExpiry && Math.floor(Date.now() / 1000) < token.tokenExpiry) {
+                return token;
+            }
+            // Token has expired, don't try to refresh here (we'll handle that separately)
+            return {
+                ...token,
+                error: "TokenExpired"
+            };
         }
+    },
+    debug: ("TURBOPACK compile-time value", "development") === "development",
+    pages: {
+        signIn: "/",
+        error: "/"
     }
 });
 }}),

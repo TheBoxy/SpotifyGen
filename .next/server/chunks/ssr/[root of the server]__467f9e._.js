@@ -127,64 +127,163 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$pages$2f$Home$2e$module$2e$c
 ;
 ;
 function Home() {
-    const { data: session } = (0, __TURBOPACK__imported__module__$5b$externals$5d2f$next$2d$auth$2f$react__$5b$external$5d$__$28$next$2d$auth$2f$react$2c$__cjs$29$__["useSession"])();
+    const { data: session, update: updateSession } = (0, __TURBOPACK__imported__module__$5b$externals$5d2f$next$2d$auth$2f$react__$5b$external$5d$__$28$next$2d$auth$2f$react$2c$__cjs$29$__["useSession"])();
     const [era, setEra] = (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react__$5b$external$5d$__$28$react$2c$__cjs$29$__["useState"])(null);
     const [header, setHeader] = (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react__$5b$external$5d$__$28$react$2c$__cjs$29$__["useState"])("Your Current Era");
     const [tracks, setTracks] = (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react__$5b$external$5d$__$28$react$2c$__cjs$29$__["useState"])([]);
     const [showTracks, setShowTracks] = (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react__$5b$external$5d$__$28$react$2c$__cjs$29$__["useState"])(false);
     const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react__$5b$external$5d$__$28$react$2c$__cjs$29$__["useState"])(false);
-    const refreshAccessToken = async ()=>{
-        const res = await fetch("/api/spotify/refresh-token");
-        const data = await res.json();
-        if (res.ok) {
-            if (session) {
-                session.accessToken = data.accessToken;
-                session.refreshToken = data.refreshToken;
-            }
+    const [selectedTimeRange, setSelectedTimeRange] = (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react__$5b$external$5d$__$28$react$2c$__cjs$29$__["useState"])("short_term");
+    const [timeRangeChanged, setTimeRangeChanged] = (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react__$5b$external$5d$__$28$react$2c$__cjs$29$__["useState"])(false);
+    const timeRangeOptions = [
+        {
+            value: "short_term",
+            label: "Last Month",
+            description: "Your top tracks from the past 4 weeks"
+        },
+        {
+            value: "medium_term",
+            label: "Last 6 Months",
+            description: "Your top tracks from the past 6 months"
+        },
+        {
+            value: "long_term",
+            label: "Last 12+ Months",
+            description: "Your top tracks from the past several years"
+        }
+    ];
+    // Reset the page when time period changes
+    (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react__$5b$external$5d$__$28$react$2c$__cjs$29$__["useEffect"])(()=>{
+        // Reset to default state, similar to initial load
+        setEra(null);
+        setHeader("Your Current Era");
+        setTracks([]);
+        setShowTracks(false);
+        // Only set this to true if it's not the initial render
+        if (selectedTimeRange) {
+            setTimeRangeChanged(true);
+        }
+    }, [
+        selectedTimeRange
+    ]);
+    // Create a function to handle time range selection
+    const handleTimeRangeSelect = (newTimeRange)=>{
+        if (newTimeRange !== selectedTimeRange) {
+            setSelectedTimeRange(newTimeRange);
+        // Additional reset logic is handled by the useEffect above
         }
     };
+    const refreshAccessToken = (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react__$5b$external$5d$__$28$react$2c$__cjs$29$__["useCallback"])(async ()=>{
+        try {
+            console.log("Refreshing access token...");
+            const res = await fetch("/api/spotify/refresh-token");
+            if (!res.ok) {
+                console.error("Failed to refresh token:", await res.text());
+                return false;
+            }
+            const data = await res.json();
+            // Update the session with the new tokens using the update method from useSession
+            await updateSession({
+                accessToken: data.accessToken,
+                refreshToken: data.refreshToken || session?.refreshToken
+            });
+            console.log("Token refreshed successfully");
+            return true;
+        } catch (error) {
+            console.error("Error refreshing token:", error);
+            return false;
+        }
+    }, [
+        session,
+        updateSession
+    ]);
     const handleGenerateEra = async ()=>{
         setLoading(true);
-        if (!session) {
-            console.error("No session found");
-            setLoading(false);
-            return;
-        }
-        let tracksRes = await fetch("/api/spotify/top-tracks", {
-            headers: {
-                Authorization: `Bearer ${session.accessToken}`
+        setEra(null); // Reset any previous era data
+        setTimeRangeChanged(false); // Reset the prompt when generating
+        try {
+            if (!session) {
+                console.error("No session found");
+                setLoading(false);
+                return;
             }
-        });
-        if (tracksRes.status === 401) {
-            await refreshAccessToken();
-            tracksRes = await fetch("/api/spotify/top-tracks", {
-                headers: {
-                    Authorization: `Bearer ${session.accessToken}`
+            // Function to fetch tracks with the current token
+            const fetchTracks = async (token)=>{
+                const response = await fetch(`/api/spotify/top-tracks?timeRange=${selectedTimeRange}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                return response;
+            };
+            // First attempt using current token
+            let tracksRes = await fetchTracks(session.accessToken);
+            // If unauthorized, try to refresh token and retry
+            if (tracksRes.status === 401 || tracksRes.status === 403) {
+                console.log("Token expired, attempting to refresh...");
+                const refreshSuccessful = await refreshAccessToken();
+                if (!refreshSuccessful) {
+                    console.error("Failed to refresh token, signing out");
+                    (0, __TURBOPACK__imported__module__$5b$externals$5d2f$next$2d$auth$2f$react__$5b$external$5d$__$28$next$2d$auth$2f$react$2c$__cjs$29$__["signOut"])();
+                    setLoading(false);
+                    return;
                 }
-            });
-        }
-        const tracksData = await tracksRes.json();
-        if (Array.isArray(tracksData.items)) {
+                // Get the updated session
+                const updatedSession = await (0, __TURBOPACK__imported__module__$5b$externals$5d2f$next$2d$auth$2f$react__$5b$external$5d$__$28$next$2d$auth$2f$react$2c$__cjs$29$__["getSession"])();
+                if (!updatedSession?.accessToken) {
+                    console.error("No token after refresh, signing out");
+                    (0, __TURBOPACK__imported__module__$5b$externals$5d2f$next$2d$auth$2f$react__$5b$external$5d$__$28$next$2d$auth$2f$react$2c$__cjs$29$__["signOut"])();
+                    setLoading(false);
+                    return;
+                }
+                // Retry with new token
+                tracksRes = await fetchTracks(updatedSession.accessToken);
+                // If still failing, give up
+                if (tracksRes.status === 401 || tracksRes.status === 403) {
+                    console.error("Still unauthorized after token refresh");
+                    (0, __TURBOPACK__imported__module__$5b$externals$5d2f$next$2d$auth$2f$react__$5b$external$5d$__$28$next$2d$auth$2f$react$2c$__cjs$29$__["signOut"])();
+                    setLoading(false);
+                    return;
+                }
+            }
+            // Handle other API errors
+            if (!tracksRes.ok) {
+                console.error("Failed to fetch tracks:", await tracksRes.text());
+                setLoading(false);
+                return;
+            }
+            const tracksData = await tracksRes.json();
+            if (!Array.isArray(tracksData.items)) {
+                console.error("tracksData.items is not an array", tracksData);
+                setLoading(false);
+                return;
+            }
             setTracks(tracksData.items);
-            setShowTracks(true); // Show the tracks section after fetching the tracks
-        } else {
-            console.error("tracksData.items is not an array", tracksData.items);
+            setShowTracks(true);
+            // Generate the era
+            const res = await fetch("/api/gpt/generate-era", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    tracks: tracksData.items,
+                    timeRange: selectedTimeRange
+                })
+            });
+            if (!res.ok) {
+                console.error("Failed to generate era:", await res.text());
+                setLoading(false);
+                return;
+            }
+            const gptRes = await res.json();
+            setEra(gptRes.era);
+            setHeader(gptRes.header);
+        } catch (error) {
+            console.error("Error generating era:", error);
+        } finally{
             setLoading(false);
-            return;
         }
-        const res = await fetch("/api/gpt/generate-era", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                tracks: tracksData.items
-            })
-        });
-        const gptRes = await res.json();
-        setEra(gptRes.era);
-        setHeader(gptRes.header);
-        setLoading(false);
     };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("main", {
         className: `${__TURBOPACK__imported__module__$5b$project$5d2f$pages$2f$Home$2e$module$2e$css__$5b$ssr$5d$__$28$css__module$29$__["default"].main} flex flex-col items-center justify-center h-screen text-white p-6`,
@@ -194,40 +293,104 @@ function Home() {
                 children: "Spotify Era Generator"
             }, void 0, false, {
                 fileName: "[project]/pages/index.tsx",
-                lineNumber: 98,
+                lineNumber: 203,
                 columnNumber: 7
             }, this),
             session ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
                 className: "flex flex-col items-center gap-6 mt-6 p-6 bg-gray-200 text-black rounded-xl shadow-lg w-full max-w-4xl",
                 children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
+                        className: "w-full max-w-lg",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("h2", {
+                                className: "text-lg font-semibold mb-3",
+                                children: "Select Time Period:"
+                            }, void 0, false, {
+                                fileName: "[project]/pages/index.tsx",
+                                lineNumber: 207,
+                                columnNumber: 13
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
+                                className: "flex flex-col gap-2 sm:flex-row sm:gap-4 justify-between mb-4",
+                                children: timeRangeOptions.map((option)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
+                                        className: `flex-1 p-3 rounded-lg cursor-pointer transition-all border-2 ${selectedTimeRange === option.value ? 'bg-green-500 text-white border-green-600' : 'bg-gray-100 hover:bg-gray-300 border-gray-300'}`,
+                                        onClick: ()=>handleTimeRangeSelect(option.value),
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("h3", {
+                                                className: "font-bold",
+                                                children: option.label
+                                            }, void 0, false, {
+                                                fileName: "[project]/pages/index.tsx",
+                                                lineNumber: 219,
+                                                columnNumber: 19
+                                            }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("p", {
+                                                className: "text-xs mt-1",
+                                                children: option.description
+                                            }, void 0, false, {
+                                                fileName: "[project]/pages/index.tsx",
+                                                lineNumber: 220,
+                                                columnNumber: 19
+                                            }, this)
+                                        ]
+                                    }, option.value, true, {
+                                        fileName: "[project]/pages/index.tsx",
+                                        lineNumber: 210,
+                                        columnNumber: 17
+                                    }, this))
+                            }, void 0, false, {
+                                fileName: "[project]/pages/index.tsx",
+                                lineNumber: 208,
+                                columnNumber: 13
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/pages/index.tsx",
+                        lineNumber: 206,
+                        columnNumber: 11
+                    }, this),
+                    timeRangeChanged && !loading && !showTracks && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
+                        className: "text-center p-3 bg-blue-100 text-blue-700 rounded-lg w-full max-w-lg mb-2 animate-pulse",
+                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("p", {
+                            children: 'Time period updated! Click "Generate Your Era" to see your new results.'
+                        }, void 0, false, {
+                            fileName: "[project]/pages/index.tsx",
+                            lineNumber: 228,
+                            columnNumber: 15
+                        }, this)
+                    }, void 0, false, {
+                        fileName: "[project]/pages/index.tsx",
+                        lineNumber: 227,
+                        columnNumber: 13
+                    }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("button", {
                         onClick: handleGenerateEra,
-                        className: "mb-4 px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg shadow-md transition-all",
+                        className: `mb-4 px-6 py-3 ${timeRangeChanged ? 'bg-green-600 animate-pulse' : 'bg-green-500'} hover:bg-green-600 text-white font-bold rounded-lg shadow-md transition-all`,
                         children: "Generate Your Era"
                     }, void 0, false, {
                         fileName: "[project]/pages/index.tsx",
-                        lineNumber: 101,
+                        lineNumber: 232,
                         columnNumber: 11
                     }, this),
                     loading && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
                         className: __TURBOPACK__imported__module__$5b$project$5d2f$pages$2f$Home$2e$module$2e$css__$5b$ssr$5d$__$28$css__module$29$__["default"].spinner
                     }, void 0, false, {
                         fileName: "[project]/pages/index.tsx",
-                        lineNumber: 107,
+                        lineNumber: 239,
                         columnNumber: 23
                     }, this),
                     showTracks && !loading && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
-                        className: "flex flex-row gap-6 mt-6 w-full",
+                        className: "flex flex-col md:flex-row gap-6 mt-6 w-full",
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
-                                className: "flex flex-col bg-gray-100 p-4 rounded-lg shadow-md w-1/3",
+                                className: "flex flex-col bg-gray-100 p-4 rounded-lg shadow-md w-full md:w-1/3",
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("h2", {
                                         className: "text-xl font-bold mb-3",
-                                        children: "Top Tracks (Month)"
+                                        children: selectedTimeRange === "short_term" ? "Top Tracks (Last Month)" : selectedTimeRange === "medium_term" ? "Top Tracks (Last 6 Months)" : "Top Tracks (Last 12+ Months)"
                                     }, void 0, false, {
                                         fileName: "[project]/pages/index.tsx",
-                                        lineNumber: 111,
+                                        lineNumber: 244,
                                         columnNumber: 17
                                     }, this),
                                     tracks.map((track, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -239,7 +402,7 @@ function Home() {
                                                     className: "w-12 h-12 rounded-md"
                                                 }, void 0, false, {
                                                     fileName: "[project]/pages/index.tsx",
-                                                    lineNumber: 114,
+                                                    lineNumber: 251,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("p", {
@@ -251,30 +414,30 @@ function Home() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/pages/index.tsx",
-                                                    lineNumber: 115,
+                                                    lineNumber: 252,
                                                     columnNumber: 21
                                                 }, this)
                                             ]
                                         }, index, true, {
                                             fileName: "[project]/pages/index.tsx",
-                                            lineNumber: 113,
+                                            lineNumber: 250,
                                             columnNumber: 19
                                         }, this))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/pages/index.tsx",
-                                lineNumber: 110,
+                                lineNumber: 243,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
-                                className: `flex flex-col items-center bg-gray-100 p-6 rounded-lg shadow-md w-2/3 max-h-96 overflow-y-auto`,
+                                className: `flex flex-col items-center bg-gray-100 p-6 rounded-lg shadow-md w-full md:w-2/3 max-h-96 overflow-y-auto`,
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("h2", {
                                         className: "text-2xl font-bold mb-4",
                                         children: header
                                     }, void 0, false, {
                                         fileName: "[project]/pages/index.tsx",
-                                        lineNumber: 120,
+                                        lineNumber: 257,
                                         columnNumber: 17
                                     }, this),
                                     era && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -284,24 +447,24 @@ function Home() {
                                             children: era
                                         }, void 0, false, {
                                             fileName: "[project]/pages/index.tsx",
-                                            lineNumber: 123,
+                                            lineNumber: 260,
                                             columnNumber: 21
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/pages/index.tsx",
-                                        lineNumber: 122,
+                                        lineNumber: 259,
                                         columnNumber: 19
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/pages/index.tsx",
-                                lineNumber: 119,
+                                lineNumber: 256,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/pages/index.tsx",
-                        lineNumber: 109,
+                        lineNumber: 242,
                         columnNumber: 13
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("button", {
@@ -310,13 +473,13 @@ function Home() {
                         children: "Sign Out"
                     }, void 0, false, {
                         fileName: "[project]/pages/index.tsx",
-                        lineNumber: 129,
+                        lineNumber: 266,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/pages/index.tsx",
-                lineNumber: 100,
+                lineNumber: 205,
                 columnNumber: 9
             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("button", {
                 onClick: ()=>(0, __TURBOPACK__imported__module__$5b$externals$5d2f$next$2d$auth$2f$react__$5b$external$5d$__$28$next$2d$auth$2f$react$2c$__cjs$29$__["signIn"])("spotify"),
@@ -324,13 +487,13 @@ function Home() {
                 children: "Sign in with Spotify"
             }, void 0, false, {
                 fileName: "[project]/pages/index.tsx",
-                lineNumber: 137,
+                lineNumber: 274,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/pages/index.tsx",
-        lineNumber: 97,
+        lineNumber: 202,
         columnNumber: 5
     }, this);
 }

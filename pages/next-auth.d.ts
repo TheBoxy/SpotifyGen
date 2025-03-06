@@ -1,9 +1,11 @@
 // next-auth.d.ts
-import { DefaultSession } from 'next-auth';
+import "next-auth";
 
-declare module 'next-auth' {
-  interface Session extends DefaultSession {
-    accessToken: string;
-    refreshToken: string;
+declare module "next-auth" {
+  interface Session {
+    accessToken?: string;
+    refreshToken?: string;
+    tokenExpiry?: number;
+    error?: string;
   }
 }
