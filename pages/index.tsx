@@ -266,15 +266,6 @@ interface Track {
   artists: { name: string }[];
 }
 
-interface TracksResponse {
-  items: Track[];
-}
-
-interface GptResponse {
-  era: string;
-  header: string;
-}
-
 type TimeRange = 'short_term' | 'medium_term' | 'long_term';
 
 interface TimeRangeOption {
@@ -284,12 +275,11 @@ interface TimeRangeOption {
 }
 
 // ShareModal Component
-const ShareModal = ({ isOpen, onClose, header, characters, era }: { 
+const ShareModal = ({ isOpen, onClose, header, characters }: { 
   isOpen: boolean, 
   onClose: () => void, 
   header: string, 
-  characters: { name: string, description: string }[],
-  era: string
+  characters: { name: string, description: string }[]
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -312,26 +302,11 @@ const ShareModal = ({ isOpen, onClose, header, characters, era }: {
     try {
       setDownloading(true);
       
-      // First, convert any Wikipedia SVG images to PNG placeholders as they often cause CORS issues
-      const svgImages = cardRef.current.querySelectorAll('img[src*=".svg"]');
-      svgImages.forEach(img => {
-        const colorOptions = ['9966FF', 'FF6699', '33CCFF'];
-        const randomColor = colorOptions[Math.floor(Math.random() * colorOptions.length)];
-        const altText = img.getAttribute('alt') || 'Character';
-        img.setAttribute('src', `https://via.placeholder.com/150/${randomColor}/FFFFFF?text=${encodeURIComponent(altText.substring(0, 10))}`);
-      });
-      
-      // Add a small delay to let any new images load
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      // Use html2canvas with appropriate settings for Wikipedia images
+      // Use html2canvas with settings optimized for our content
       const canvas = await html2canvas(cardRef.current, {
         scale: 2, // Higher quality
-        backgroundColor: '#FFFFFF', // White background instead of transparent
+        backgroundColor: '#FFFFFF',
         logging: false,
-        imageTimeout: 0, // No timeout
-        allowTaint: true, // Important for Wikipedia images
-        useCORS: false, // Don't try to use CORS as Wikipedia doesn't support it well
         onclone: (_, element) => {
           // Make sure all elements are visible
           element.querySelectorAll('*').forEach(el => {
@@ -356,7 +331,7 @@ const ShareModal = ({ isOpen, onClose, header, characters, era }: {
       setDownloading(false);
     } catch (error) {
       console.error('Error generating image:', error);
-      alert('Failed to download image. Try again or use the "Copy to Clipboard" option instead.');
+      alert("Failed to download image. Try again or use the Copy to Clipboard option instead.");
       setDownloading(false);
     }
   };
@@ -780,7 +755,6 @@ export default function Home() {
         onClose={() => setIsShareModalOpen(false)}
         header={header}
         characters={characters}
-        era={era || ""}
       />
     </>
   );
