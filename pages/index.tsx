@@ -2,6 +2,7 @@ import { useSession, signIn, signOut, getSession } from "next-auth/react";
 import { useState, useCallback, useEffect, useRef } from "react";
 import styles from './Home.module.css'; // Import the CSS module
 import Head from 'next/head';
+import Image from 'next/image';
 import html2canvas from 'html2canvas';
 
 // Function to extract cartoon characters from text
@@ -659,12 +660,47 @@ export default function Home() {
             </button>
           </div>
         ) : (
-          <button
-            onClick={() => signIn("spotify")}
-            className="mt-4 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg transition-all"
-          >
-            Sign in with Spotify
-          </button>
+          <div className="flex flex-col items-center">
+            <button
+              onClick={() => signIn("spotify")}
+              className="mt-4 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg transition-all"
+            >
+              Sign in with Spotify
+            </button>
+            
+            {/* Preview Section */}
+            <div className="mt-8 max-w-2xl w-full">
+              <div className="text-center mb-6">
+                <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                  See What's Waiting for You
+                </h2>
+                <p className="text-gray-200 text-sm md:text-base">
+                  Discover your unique musical era based on your Spotify listening history
+                </p>
+              </div>
+              
+              <div className="relative bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-2xl border border-white/20">
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-2xl"></div>
+                <div className="relative">
+                  <Image
+                    src="/example.png"
+                    alt="Preview of Spotify Era Generator interface showing personalized music era results"
+                    width={800}
+                    height={600}
+                    className="w-full h-auto rounded-lg shadow-lg"
+                    priority
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent rounded-lg"></div>
+                </div>
+                
+                <div className="mt-4 text-center">
+                  <p className="text-white/90 text-sm md:text-base font-medium">
+                    Get personalized insights about your music taste, discover your era, and share your results!
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
       </main>
       

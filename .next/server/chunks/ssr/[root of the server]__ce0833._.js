@@ -217,132 +217,46 @@ const extractCharacters = (text)=>{
         };
     });
 };
-// Function to get image URL for cartoon character with improved Wikipedia URLs and dynamic search
-const getCharacterImage = (characterName)=>{
-    // Lowercase and clean the name for better matching
-    const nameLower = characterName.toLowerCase().trim();
-    // Map of character names to their Wikipedia image URLs
-    const characterImages = {
-        // Popular cartoon characters with Wikipedia image URLs
-        'spongebob': 'https://upload.wikimedia.org/wikipedia/en/thumb/3/3b/SpongeBob_SquarePants_character.svg/1200px-SpongeBob_SquarePants_character.svg.png',
-        'patrick': 'https://upload.wikimedia.org/wikipedia/en/thumb/3/33/Patrick_Star.svg/1200px-Patrick_Star.svg.png',
-        'squidward': 'https://upload.wikimedia.org/wikipedia/en/thumb/8/8f/Squidward_Tentacles.svg/1200px-Squidward_Tentacles.svg.png',
-        'lisa simpson': 'https://upload.wikimedia.org/wikipedia/en/thumb/e/ec/Lisa_Simpson.png/220px-Lisa_Simpson.png',
-        'bart simpson': 'https://upload.wikimedia.org/wikipedia/en/a/aa/Bart_Simpson_200px.png',
-        'homer simpson': 'https://upload.wikimedia.org/wikipedia/en/0/02/Homer_Simpson_2006.png',
-        'rick sanchez': 'https://upload.wikimedia.org/wikipedia/en/a/a6/Rick_Sanchez.png',
-        'morty smith': 'https://upload.wikimedia.org/wikipedia/en/a/a8/Rick_and_Morty_characters.jpg',
-        'bojack horseman': 'https://upload.wikimedia.org/wikipedia/en/d/dc/BoJack_Horseman_character.png',
-        'finn': 'https://upload.wikimedia.org/wikipedia/en/thumb/0/0e/Finn_Adventure_Time.png/250px-Finn_Adventure_Time.png',
-        'jake': 'https://upload.wikimedia.org/wikipedia/en/thumb/3/3b/Jake_the_Dog.png/240px-Jake_the_Dog.png',
-        'naruto': 'https://upload.wikimedia.org/wikipedia/en/9/9a/Naruto_Uzumaki.png',
-        'sailor moon': 'https://upload.wikimedia.org/wikipedia/en/thumb/2/2b/Sailor_moon_crystal_character_design_sailor_moon.jpg/220px-Sailor_moon_crystal_character_design_sailor_moon.jpg',
-        'pikachu': 'https://upload.wikimedia.org/wikipedia/en/a/a6/Pokémon_Pikachu_art.png',
-        'mickey mouse': 'https://upload.wikimedia.org/wikipedia/en/d/d4/Mickey_Mouse.png',
-        'bugs bunny': 'https://upload.wikimedia.org/wikipedia/en/1/17/Bugs_Bunny.svg',
-        'steven universe': 'https://upload.wikimedia.org/wikipedia/en/0/05/Steven_Universe.png',
-        'powerpuff girls': 'https://upload.wikimedia.org/wikipedia/en/thumb/c/c6/The_Powerpuff_Girls_%28characters%29.png/250px-The_Powerpuff_Girls_%28characters%29.png',
-        'scooby-doo': 'https://upload.wikimedia.org/wikipedia/en/thumb/9/9a/Scooby-Doo.png/300px-Scooby-Doo.png',
-        'shaggy': 'https://upload.wikimedia.org/wikipedia/en/thumb/6/61/Shaggy_Rogers.png/225px-Shaggy_Rogers.png',
-        'velma': 'https://upload.wikimedia.org/wikipedia/en/9/9d/Velma_Dinkley.png',
-        'garfield': 'https://upload.wikimedia.org/wikipedia/en/thumb/b/bc/Garfield_the_Cat.svg/1200px-Garfield_the_Cat.svg.png',
-        'charlie brown': 'https://upload.wikimedia.org/wikipedia/en/2/22/Charlie_Brown.png',
-        'snoopy': 'https://upload.wikimedia.org/wikipedia/en/5/53/Snoopy_Peanuts.png',
-        'totoro': 'https://upload.wikimedia.org/wikipedia/en/d/df/Totoro_DB.jpg',
-        'winnie the pooh': 'https://upload.wikimedia.org/wikipedia/en/1/10/Winniethepooh.png',
-        'batman': 'https://upload.wikimedia.org/wikipedia/en/c/c7/Batman_Infobox.jpg',
-        'superman': 'https://upload.wikimedia.org/wikipedia/en/3/35/Supermanflying.png',
-        'spider-man': 'https://upload.wikimedia.org/wikipedia/en/2/21/Web_of_Spider-Man_Vol_1_129-1.png',
-        'mario': 'https://upload.wikimedia.org/wikipedia/en/a/a9/MarioNSMBUDeluxe.png',
-        'sonic': 'https://upload.wikimedia.org/wikipedia/en/thumb/2/2d/Sonic_the_Hedgehog_1991_box_art.jpg/220px-Sonic_the_Hedgehog_1991_box_art.jpg',
-        'dora': 'https://upload.wikimedia.org/wikipedia/en/7/78/Dora_the_Explorer.png',
-        'hello kitty': 'https://upload.wikimedia.org/wikipedia/en/0/05/Hello_kitty_character_portrait.png',
-        'tom and jerry': 'https://upload.wikimedia.org/wikipedia/en/f/f8/Tom_and_Jerry_characters.jpg',
-        'popeye': 'https://upload.wikimedia.org/wikipedia/en/thumb/0/00/Popeye.png/220px-Popeye.png',
-        'donald duck': 'https://upload.wikimedia.org/wikipedia/en/thumb/a/a5/Donald_Duck_angry_transparent_background.png/220px-Donald_Duck_angry_transparent_background.png',
-        'goofy': 'https://upload.wikimedia.org/wikipedia/en/thumb/5/50/Goofy_Duckipedia.png/220px-Goofy_Duckipedia.png',
-        'betty boop': 'https://upload.wikimedia.org/wikipedia/en/thumb/0/0b/Betty_Boop_Infobox.png/240px-Betty_Boop_Infobox.png',
-        'scooby': 'https://upload.wikimedia.org/wikipedia/en/thumb/9/9a/Scooby-Doo.png/300px-Scooby-Doo.png'
-    };
-    // Default fallback images for different character categories (using placeholders)
-    const defaultImages = [
-        'https://via.placeholder.com/150/9966FF/FFFFFF?text=Character',
-        'https://via.placeholder.com/150/FF6699/FFFFFF?text=Character',
-        'https://via.placeholder.com/150/33CCFF/FFFFFF?text=Character'
+// Function to generate a consistent color based on character name
+const getCharacterColor = (name)=>{
+    // Define a set of vibrant colors that work well for avatars
+    const colors = [
+        '#FF6B6B',
+        '#4ECDC4',
+        '#45B7D1',
+        '#8675A9',
+        '#FFBE0B',
+        '#4CAF50',
+        '#FB5607',
+        '#3A86FF',
+        '#FF006E',
+        '#8338EC',
+        '#06D6A0',
+        '#FF9F1C'
     ];
-    // Try direct match first
-    if (characterImages[nameLower]) {
-        return characterImages[nameLower];
+    // Use a simple hash function to get a consistent color for the same name
+    let hash = 0;
+    for(let i = 0; i < name.length; i++){
+        hash = name.charCodeAt(i) + ((hash << 5) - hash);
     }
-    // If no direct match, try partial matches
-    for (const [key, url] of Object.entries(characterImages)){
-        if (nameLower.includes(key) || key.includes(nameLower)) {
-            return url;
-        }
-    }
-    // If still no match, try to construct a Wikipedia URL
-    // Format the character name for a Wikipedia URL
-    const formattedName = characterName.replace(/[^\w\s-]/g, '') // Remove special characters
-    .split(' ').map((word)=>word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize first letter of each word
-    .join('_'); // Join with underscores
-    // Wikipedia URL patterns to try
-    const wikipediaPatterns = [
-        `https://upload.wikimedia.org/wikipedia/en/thumb/e/e7/${formattedName}.png/220px-${formattedName}.png`,
-        `https://upload.wikimedia.org/wikipedia/en/thumb/1/1c/${formattedName}.jpg/220px-${formattedName}.jpg`,
-        `https://upload.wikimedia.org/wikipedia/en/thumb/5/53/${formattedName}_character.png/220px-${formattedName}_character.png`,
-        `https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/${formattedName}.png/220px-${formattedName}.png`
-    ];
-    // Build a custom Wikipedia search URL as a fallback
-    return {
-        original: wikipediaPatterns[0],
-        fallbacks: [
-            ...wikipediaPatterns.slice(1),
-            ...defaultImages
-        ]
-    };
+    // Use the hash to pick a color from the array
+    const colorIndex = Math.abs(hash) % colors.length;
+    return colors[colorIndex];
 };
-// Add a component to handle image loading with fallbacks and dynamic search
-const CharacterImage = ({ name, src })=>{
-    const [imgSrc, setImgSrc] = (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react__$5b$external$5d$__$28$react$2c$__cjs$29$__["useState"])(typeof src === 'string' ? src : src.original);
-    const [fallbackIndex, setFallbackIndex] = (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react__$5b$external$5d$__$28$react$2c$__cjs$29$__["useState"])(0);
-    const [hasError, setHasError] = (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react__$5b$external$5d$__$28$react$2c$__cjs$29$__["useState"])(false);
-    const fallbacks = typeof src === 'string' ? [] : src.fallbacks;
-    const handleError = ()=>{
-        if (fallbacks && fallbackIndex < fallbacks.length) {
-            // Try the next fallback
-            setImgSrc(fallbacks[fallbackIndex]);
-            setFallbackIndex((prevIndex)=>prevIndex + 1);
-        } else if (!hasError) {
-            // If no fallbacks left or no fallbacks provided, use a colored placeholder
-            setHasError(true);
-            const colors = [
-                '9966FF',
-                'FF6699',
-                '33CCFF',
-                '66CC33',
-                'FF9933'
-            ];
-            const randomColor = colors[Math.floor(Math.random() * colors.length)];
-            // Create a more personalized placeholder with the character's initials
-            const initials = name.split(' ').map((word)=>word.charAt(0)).join('').substring(0, 2).toUpperCase();
-            setImgSrc(`https://via.placeholder.com/150/${randomColor}/FFFFFF?text=${encodeURIComponent(initials)}`);
-        }
-    };
+// Component to render character avatars consistently
+const CharacterAvatar = ({ name })=>{
+    const backgroundColor = getCharacterColor(name);
+    // Generate initials: up to 2 characters from the name
+    const initials = name.split(' ').map((word)=>word.charAt(0)).join('').substring(0, 2).toUpperCase();
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
-        className: "w-16 h-16 rounded-full overflow-hidden flex-shrink-0 bg-gray-200 flex items-center justify-center",
-        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("img", {
-            src: imgSrc,
-            alt: name,
-            className: "w-full h-full object-cover",
-            onError: handleError
-        }, void 0, false, {
-            fileName: "[project]/pages/index.tsx",
-            lineNumber: 211,
-            columnNumber: 7
-        }, this)
+        className: "w-16 h-16 rounded-full flex-shrink-0 flex items-center justify-center text-white font-bold text-lg shadow-md",
+        style: {
+            backgroundColor
+        },
+        children: initials
     }, void 0, false, {
         fileName: "[project]/pages/index.tsx",
-        lineNumber: 210,
+        lineNumber: 130,
         columnNumber: 5
     }, this);
 };
@@ -370,17 +284,17 @@ const formatEraText = (text)=>{
                             }
                         }, i, false, {
                             fileName: "[project]/pages/index.tsx",
-                            lineNumber: 244,
+                            lineNumber: 162,
                             columnNumber: 15
                         }, this))
                 }, void 0, false, {
                     fileName: "[project]/pages/index.tsx",
-                    lineNumber: 242,
+                    lineNumber: 160,
                     columnNumber: 11
                 }, this)
             }, index, false, {
                 fileName: "[project]/pages/index.tsx",
-                lineNumber: 241,
+                lineNumber: 159,
                 columnNumber: 9
             }, this);
         }
@@ -392,47 +306,30 @@ const formatEraText = (text)=>{
             }
         }, index, false, {
             fileName: "[project]/pages/index.tsx",
-            lineNumber: 254,
+            lineNumber: 172,
             columnNumber: 7
         }, this);
     });
 };
 // ShareModal Component
-const ShareModal = ({ isOpen, onClose, header, characters, era })=>{
+const ShareModal = ({ isOpen, onClose, header, characters })=>{
     const modalRef = (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react__$5b$external$5d$__$28$react$2c$__cjs$29$__["useRef"])(null);
     const cardRef = (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react__$5b$external$5d$__$28$react$2c$__cjs$29$__["useRef"])(null);
     const [downloading, setDownloading] = (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react__$5b$external$5d$__$28$react$2c$__cjs$29$__["useState"])(false);
     const handleCopyLink = ()=>{
         // Create a sharable text
         const shareText = `My Spotify Era is: ${header}\n\nMatching Cartoon Characters:\n${characters.map((char)=>`- ${char.name}: ${char.description}`).join('\n')}\n\nGenerate your own era at https://spotify-era-generator.vercel.app/`;
-        navigator.clipboard.writeText(shareText).then(()=>alert('Copied to clipboard!')).catch((err)=>console.error('Failed to copy: ', err));
+        navigator.clipboard.writeText(shareText).then(()=>alert("Copied to clipboard!")).catch((err)=>console.error("Failed to copy: ", err));
     };
     const handleDownloadImage = async ()=>{
         if (!cardRef.current) return;
         try {
             setDownloading(true);
-            // First, convert any Wikipedia SVG images to PNG placeholders as they often cause CORS issues
-            const svgImages = cardRef.current.querySelectorAll('img[src*=".svg"]');
-            svgImages.forEach((img)=>{
-                const colorOptions = [
-                    '9966FF',
-                    'FF6699',
-                    '33CCFF'
-                ];
-                const randomColor = colorOptions[Math.floor(Math.random() * colorOptions.length)];
-                const altText = img.getAttribute('alt') || 'Character';
-                img.setAttribute('src', `https://via.placeholder.com/150/${randomColor}/FFFFFF?text=${encodeURIComponent(altText.substring(0, 10))}`);
-            });
-            // Add a small delay to let any new images load
-            await new Promise((resolve)=>setTimeout(resolve, 100));
-            // Use html2canvas with appropriate settings for Wikipedia images
+            // Use html2canvas with settings optimized for our content
             const canvas = await (0, __TURBOPACK__imported__module__$5b$externals$5d2f$html2canvas__$5b$external$5d$__$28$html2canvas$2c$__cjs$29$__["default"])(cardRef.current, {
                 scale: 2,
                 backgroundColor: '#FFFFFF',
                 logging: false,
-                imageTimeout: 0,
-                allowTaint: true,
-                useCORS: false,
                 onclone: (_, element)=>{
                     // Make sure all elements are visible
                     element.querySelectorAll('*').forEach((el)=>{
@@ -453,8 +350,8 @@ const ShareModal = ({ isOpen, onClose, header, characters, era })=>{
             document.body.removeChild(downloadLink);
             setDownloading(false);
         } catch (error) {
-            console.error('Error generating image:', error);
-            alert('Failed to download image. Try again or use the "Copy to Clipboard" option instead.');
+            console.error("Error generating image:", error);
+            alert("Failed to download image. Try again or use the Copy to Clipboard option instead.");
             setDownloading(false);
         }
     };
@@ -490,7 +387,7 @@ const ShareModal = ({ isOpen, onClose, header, characters, era })=>{
                             children: "Share Your Era"
                         }, void 0, false, {
                             fileName: "[project]/pages/index.tsx",
-                            lineNumber: 387,
+                            lineNumber: 280,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("button", {
@@ -509,23 +406,23 @@ const ShareModal = ({ isOpen, onClose, header, characters, era })=>{
                                     d: "M6 18L18 6M6 6l12 12"
                                 }, void 0, false, {
                                     fileName: "[project]/pages/index.tsx",
-                                    lineNumber: 393,
+                                    lineNumber: 286,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/pages/index.tsx",
-                                lineNumber: 392,
+                                lineNumber: 285,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/pages/index.tsx",
-                            lineNumber: 388,
+                            lineNumber: 281,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/pages/index.tsx",
-                    lineNumber: 386,
+                    lineNumber: 279,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -541,7 +438,7 @@ const ShareModal = ({ isOpen, onClose, header, characters, era })=>{
                                     children: header
                                 }, void 0, false, {
                                     fileName: "[project]/pages/index.tsx",
-                                    lineNumber: 402,
+                                    lineNumber: 295,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("p", {
@@ -549,7 +446,7 @@ const ShareModal = ({ isOpen, onClose, header, characters, era })=>{
                                     children: "My Spotify Era based on my top tracks"
                                 }, void 0, false, {
                                     fileName: "[project]/pages/index.tsx",
-                                    lineNumber: 406,
+                                    lineNumber: 299,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -560,18 +457,17 @@ const ShareModal = ({ isOpen, onClose, header, characters, era })=>{
                                             children: "Cartoon Characters That Match My Vibe:"
                                         }, void 0, false, {
                                             fileName: "[project]/pages/index.tsx",
-                                            lineNumber: 411,
+                                            lineNumber: 304,
                                             columnNumber: 17
                                         }, this),
                                         characters.slice(0, 3).map((char, idx)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
                                                 className: "flex items-center gap-3 p-2 bg-gray-50 rounded-md",
                                                 children: [
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(CharacterImage, {
-                                                        name: char.name,
-                                                        src: getCharacterImage(char.name)
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(CharacterAvatar, {
+                                                        name: char.name
                                                     }, void 0, false, {
                                                         fileName: "[project]/pages/index.tsx",
-                                                        lineNumber: 418,
+                                                        lineNumber: 311,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -581,7 +477,7 @@ const ShareModal = ({ isOpen, onClose, header, characters, era })=>{
                                                                 children: char.name
                                                             }, void 0, false, {
                                                                 fileName: "[project]/pages/index.tsx",
-                                                                lineNumber: 423,
+                                                                lineNumber: 313,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("p", {
@@ -589,33 +485,33 @@ const ShareModal = ({ isOpen, onClose, header, characters, era })=>{
                                                                 children: char.description
                                                             }, void 0, false, {
                                                                 fileName: "[project]/pages/index.tsx",
-                                                                lineNumber: 424,
+                                                                lineNumber: 314,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/pages/index.tsx",
-                                                        lineNumber: 422,
+                                                        lineNumber: 312,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, idx, true, {
                                                 fileName: "[project]/pages/index.tsx",
-                                                lineNumber: 417,
+                                                lineNumber: 310,
                                                 columnNumber: 19
                                             }, this)),
                                         characters.length === 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
                                             className: "p-3 text-center text-gray-500 italic",
-                                            children: "Characters couldn't be extracted from your era description."
+                                            children: "Characters could not be extracted from your era description."
                                         }, void 0, false, {
                                             fileName: "[project]/pages/index.tsx",
-                                            lineNumber: 431,
+                                            lineNumber: 321,
                                             columnNumber: 19
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/pages/index.tsx",
-                                    lineNumber: 410,
+                                    lineNumber: 303,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -631,29 +527,29 @@ const ShareModal = ({ isOpen, onClose, header, characters, era })=>{
                                             children: "spotify-era-generator.vercel.app"
                                         }, void 0, false, {
                                             fileName: "[project]/pages/index.tsx",
-                                            lineNumber: 439,
+                                            lineNumber: 329,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/pages/index.tsx",
-                                    lineNumber: 437,
+                                    lineNumber: 327,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/pages/index.tsx",
-                            lineNumber: 401,
+                            lineNumber: 294,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/pages/index.tsx",
-                        lineNumber: 400,
+                        lineNumber: 293,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/pages/index.tsx",
-                    lineNumber: 399,
+                    lineNumber: 292,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -665,7 +561,7 @@ const ShareModal = ({ isOpen, onClose, header, characters, era })=>{
                             children: "Copy to Clipboard"
                         }, void 0, false, {
                             fileName: "[project]/pages/index.tsx",
-                            lineNumber: 454,
+                            lineNumber: 344,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("button", {
@@ -689,7 +585,7 @@ const ShareModal = ({ isOpen, onClose, header, characters, era })=>{
                                                 strokeWidth: "4"
                                             }, void 0, false, {
                                                 fileName: "[project]/pages/index.tsx",
-                                                lineNumber: 468,
+                                                lineNumber: 358,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("path", {
@@ -698,13 +594,13 @@ const ShareModal = ({ isOpen, onClose, header, characters, era })=>{
                                                 d: "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                                             }, void 0, false, {
                                                 fileName: "[project]/pages/index.tsx",
-                                                lineNumber: 469,
+                                                lineNumber: 359,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/pages/index.tsx",
-                                        lineNumber: 467,
+                                        lineNumber: 357,
                                         columnNumber: 17
                                     }, this),
                                     "Processing..."
@@ -712,24 +608,24 @@ const ShareModal = ({ isOpen, onClose, header, characters, era })=>{
                             }, void 0, true) : 'Download as Image'
                         }, void 0, false, {
                             fileName: "[project]/pages/index.tsx",
-                            lineNumber: 460,
+                            lineNumber: 350,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/pages/index.tsx",
-                    lineNumber: 453,
+                    lineNumber: 343,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/pages/index.tsx",
-            lineNumber: 385,
+            lineNumber: 278,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/pages/index.tsx",
-        lineNumber: 384,
+        lineNumber: 277,
         columnNumber: 5
     }, this);
 };
@@ -776,7 +672,7 @@ function Home() {
     }, [
         selectedTimeRange
     ]);
-    // Create a function to handle time range selection
+    // Function to handle time range selection
     const handleTimeRangeSelect = (newTimeRange)=>{
         if (newTimeRange !== selectedTimeRange) {
             setSelectedTimeRange(newTimeRange);
@@ -911,20 +807,20 @@ function Home() {
                         content: "width=device-width, initial-scale=1.0, maximum-scale=1.0"
                     }, void 0, false, {
                         fileName: "[project]/pages/index.tsx",
-                        lineNumber: 666,
+                        lineNumber: 556,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("title", {
                         children: "Spotify Era Generator"
                     }, void 0, false, {
                         fileName: "[project]/pages/index.tsx",
-                        lineNumber: 667,
+                        lineNumber: 557,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/pages/index.tsx",
-                lineNumber: 665,
+                lineNumber: 555,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("main", {
@@ -935,7 +831,7 @@ function Home() {
                         children: "Spotify Era Generator"
                     }, void 0, false, {
                         fileName: "[project]/pages/index.tsx",
-                        lineNumber: 671,
+                        lineNumber: 561,
                         columnNumber: 9
                     }, this),
                     session ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -949,7 +845,7 @@ function Home() {
                                         children: "Select Time Period:"
                                     }, void 0, false, {
                                         fileName: "[project]/pages/index.tsx",
-                                        lineNumber: 675,
+                                        lineNumber: 565,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -963,7 +859,7 @@ function Home() {
                                                         children: option.label
                                                     }, void 0, false, {
                                                         fileName: "[project]/pages/index.tsx",
-                                                        lineNumber: 687,
+                                                        lineNumber: 577,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("p", {
@@ -971,24 +867,24 @@ function Home() {
                                                         children: option.description
                                                     }, void 0, false, {
                                                         fileName: "[project]/pages/index.tsx",
-                                                        lineNumber: 688,
+                                                        lineNumber: 578,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, option.value, true, {
                                                 fileName: "[project]/pages/index.tsx",
-                                                lineNumber: 678,
+                                                lineNumber: 568,
                                                 columnNumber: 19
                                             }, this))
                                     }, void 0, false, {
                                         fileName: "[project]/pages/index.tsx",
-                                        lineNumber: 676,
+                                        lineNumber: 566,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/pages/index.tsx",
-                                lineNumber: 674,
+                                lineNumber: 564,
                                 columnNumber: 13
                             }, this),
                             timeRangeChanged && !loading && !showTracks && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -998,12 +894,12 @@ function Home() {
                                     children: 'Time period updated! Click "Generate Your Era" to see your new results.'
                                 }, void 0, false, {
                                     fileName: "[project]/pages/index.tsx",
-                                    lineNumber: 696,
+                                    lineNumber: 586,
                                     columnNumber: 17
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/pages/index.tsx",
-                                lineNumber: 695,
+                                lineNumber: 585,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("button", {
@@ -1012,15 +908,15 @@ function Home() {
                                 children: "Generate Your Era"
                             }, void 0, false, {
                                 fileName: "[project]/pages/index.tsx",
-                                lineNumber: 700,
-                                columnNumber: 11
+                                lineNumber: 590,
+                                columnNumber: 13
                             }, this),
                             loading && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
                                 className: __TURBOPACK__imported__module__$5b$project$5d2f$pages$2f$Home$2e$module$2e$css__$5b$ssr$5d$__$28$css__module$29$__["default"].spinner
                             }, void 0, false, {
                                 fileName: "[project]/pages/index.tsx",
-                                lineNumber: 707,
-                                columnNumber: 23
+                                lineNumber: 597,
+                                columnNumber: 25
                             }, this),
                             showTracks && !loading && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
                                 className: "flex flex-col md:flex-row w-full gap-4 overflow-hidden",
@@ -1033,7 +929,7 @@ function Home() {
                                                 children: selectedTimeRange === "short_term" ? "Top Tracks (Last Month)" : selectedTimeRange === "medium_term" ? "Top Tracks (Last 6 Months)" : "Top Tracks (Last 12+ Months)"
                                             }, void 0, false, {
                                                 fileName: "[project]/pages/index.tsx",
-                                                lineNumber: 712,
+                                                lineNumber: 604,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -1047,7 +943,7 @@ function Home() {
                                                                 className: "w-10 h-10 rounded-md flex-shrink-0"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/pages/index.tsx",
-                                                                lineNumber: 720,
+                                                                lineNumber: 612,
                                                                 columnNumber: 25
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("p", {
@@ -1059,24 +955,24 @@ function Home() {
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/pages/index.tsx",
-                                                                lineNumber: 721,
+                                                                lineNumber: 613,
                                                                 columnNumber: 25
                                                             }, this)
                                                         ]
                                                     }, index, true, {
                                                         fileName: "[project]/pages/index.tsx",
-                                                        lineNumber: 719,
+                                                        lineNumber: 611,
                                                         columnNumber: 23
                                                     }, this))
                                             }, void 0, false, {
                                                 fileName: "[project]/pages/index.tsx",
-                                                lineNumber: 717,
+                                                lineNumber: 609,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/pages/index.tsx",
-                                        lineNumber: 711,
+                                        lineNumber: 603,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -1089,7 +985,7 @@ function Home() {
                                                         className: "h-px bg-gradient-to-r from-transparent via-green-500 to-transparent w-12 md:w-16 mr-3"
                                                     }, void 0, false, {
                                                         fileName: "[project]/pages/index.tsx",
-                                                        lineNumber: 729,
+                                                        lineNumber: 622,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("h2", {
@@ -1097,20 +993,20 @@ function Home() {
                                                         children: header
                                                     }, void 0, false, {
                                                         fileName: "[project]/pages/index.tsx",
-                                                        lineNumber: 730,
+                                                        lineNumber: 623,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
                                                         className: "h-px bg-gradient-to-r from-transparent via-green-500 to-transparent w-12 md:w-16 ml-3"
                                                     }, void 0, false, {
                                                         fileName: "[project]/pages/index.tsx",
-                                                        lineNumber: 731,
+                                                        lineNumber: 624,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/pages/index.tsx",
-                                                lineNumber: 728,
+                                                lineNumber: 621,
                                                 columnNumber: 19
                                             }, this),
                                             era && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["Fragment"], {
@@ -1124,17 +1020,17 @@ function Home() {
                                                                 children: formatEraText(era)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/pages/index.tsx",
-                                                                lineNumber: 738,
+                                                                lineNumber: 631,
                                                                 columnNumber: 27
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/pages/index.tsx",
-                                                            lineNumber: 737,
+                                                            lineNumber: 630,
                                                             columnNumber: 25
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/pages/index.tsx",
-                                                        lineNumber: 736,
+                                                        lineNumber: 629,
                                                         columnNumber: 23
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("button", {
@@ -1150,19 +1046,19 @@ function Home() {
                                                                     d: "M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/pages/index.tsx",
-                                                                    lineNumber: 750,
+                                                                    lineNumber: 643,
                                                                     columnNumber: 27
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/pages/index.tsx",
-                                                                lineNumber: 749,
+                                                                lineNumber: 642,
                                                                 columnNumber: 25
                                                             }, this),
                                                             "Share My Era"
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/pages/index.tsx",
-                                                        lineNumber: 745,
+                                                        lineNumber: 638,
                                                         columnNumber: 23
                                                     }, this)
                                                 ]
@@ -1170,13 +1066,13 @@ function Home() {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/pages/index.tsx",
-                                        lineNumber: 727,
+                                        lineNumber: 620,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/pages/index.tsx",
-                                lineNumber: 710,
+                                lineNumber: 601,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("button", {
@@ -1185,13 +1081,13 @@ function Home() {
                                 children: "Sign Out"
                             }, void 0, false, {
                                 fileName: "[project]/pages/index.tsx",
-                                lineNumber: 760,
-                                columnNumber: 11
+                                lineNumber: 654,
+                                columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/pages/index.tsx",
-                        lineNumber: 673,
+                        lineNumber: 563,
                         columnNumber: 11
                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("button", {
                         onClick: ()=>(0, __TURBOPACK__imported__module__$5b$externals$5d2f$next$2d$auth$2f$react__$5b$external$5d$__$28$next$2d$auth$2f$react$2c$__cjs$29$__["signIn"])("spotify"),
@@ -1199,24 +1095,23 @@ function Home() {
                         children: "Sign in with Spotify"
                     }, void 0, false, {
                         fileName: "[project]/pages/index.tsx",
-                        lineNumber: 768,
-                        columnNumber: 9
+                        lineNumber: 662,
+                        columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/pages/index.tsx",
-                lineNumber: 670,
+                lineNumber: 560,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(ShareModal, {
                 isOpen: isShareModalOpen,
                 onClose: ()=>setIsShareModalOpen(false),
                 header: header,
-                characters: characters,
-                era: era || ""
+                characters: characters
             }, void 0, false, {
                 fileName: "[project]/pages/index.tsx",
-                lineNumber: 778,
+                lineNumber: 672,
                 columnNumber: 7
             }, this)
         ]
