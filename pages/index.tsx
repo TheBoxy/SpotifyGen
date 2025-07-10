@@ -610,7 +610,13 @@ export default function Home() {
                   <div className={`${styles.scrollingCard} flex flex-col gap-1 overflow-y-auto px-1 py-1 max-h-48 md:max-h-[calc(100vh-22rem)]`}>
                     {tracks.map((track, index) => (
                       <div key={index} className="flex items-center gap-2 mb-1 p-1 border-b border-gray-100">
-                        <img src={track.album.images[0].url} alt={track.name} className="w-10 h-10 rounded-md flex-shrink-0" />
+                        <Image 
+                          src={track.album.images[0].url} 
+                          alt={track.name} 
+                          width={40}
+                          height={40}
+                          className="w-10 h-10 rounded-md flex-shrink-0" 
+                        />
                         <p className="text-sm font-medium line-clamp-2 flex-1">{track.name} by {track.artists.map(artist => artist.name).join(", ")}</p>
                       </div>
                     ))}
@@ -672,7 +678,7 @@ export default function Home() {
             <div className="mt-8 max-w-2xl w-full">
               <div className="text-center mb-6">
                 <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
-                  See What's Waiting for You
+                  See What&apos;s Waiting for You
                 </h2>
                 <p className="text-gray-200 text-sm md:text-base">
                   Discover your unique musical era based on your Spotify listening history
